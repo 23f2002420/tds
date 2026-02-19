@@ -1,0 +1,29 @@
+name: Cache Demo
+
+on: [push]  # Triggers on any push to any branch
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        
+    - name: prime-cache-dafacc3  # Exact step name required
+      id: cache-step
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm  # Cache npm dependencies (common example)
+        key: cache-dafacc3  # Exact key required
+        
+    - name: Echo cache result
+      run: echo "Cache outcome: ${{ steps.cache-step.outputs.cache-hit }}"
+      
+    - name: Install deps (to populate cache on miss)
+      run: npm ci  # Or npm install; npm ci is faster/reproducible
